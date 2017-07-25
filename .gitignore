@@ -8,4 +8,4 @@ ompiled source #
 ######################
 *.log
 
-
+vendor/*/
