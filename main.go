@@ -9,8 +9,8 @@ import (
 	"github.com/Financial-Times/go-fthealth/v1a"
 	"github.com/Financial-Times/neo-utils-go/neoutils"
 	"github.com/Financial-Times/roles-rw-neo4j/roles"
-	log "github.com/Sirupsen/logrus"
 	"github.com/jawher/mow.cli"
+	log "github.com/sirupsen/logrus"
 )
 
 func main() {
