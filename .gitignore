@@ -2,10 +2,10 @@ ompiled source #
 ###################
 *.exe
 *.idea
-roles-rw-neo4j
+/roles-rw-neo4j
 
 # Logs and databases #
 ######################
 *.log
 
-
+vendor/*/

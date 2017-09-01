@@ -45,7 +45,7 @@ func (pcd CypherDriver) Check() error {
 }
 
 // Read - reads a role given a UUID
-func (pcd CypherDriver) Read(uuid string) (interface{}, bool, error) {
+func (pcd CypherDriver) Read(uuid, transactionID string) (interface{}, bool, error) {
 	results := []struct {
 		UUID              string   `json:"uuid"`
 		PrefLabel         string   `json:"prefLabel"`
@@ -102,7 +102,7 @@ func (pcd CypherDriver) Read(uuid string) (interface{}, bool, error) {
 }
 
 //Write - Writes a Role node
-func (pcd CypherDriver) Write(thing interface{}) error {
+func (pcd CypherDriver) Write(thing interface{}, transactionID string) error {
 	roleToWrite := thing.(role)
 
 	//cleanUP all the previous IDENTIFIERS referring to that uuid
@@ -166,7 +166,7 @@ func createNewIdentifierQuery(uuid string, identifierLabel string, identifierVal
 }
 
 //Delete - Deletes a Role
-func (pcd CypherDriver) Delete(uuid string) (bool, error) {
+func (pcd CypherDriver) Delete(uuid, transactionID string) (bool, error) {
 	clearNode := &neoism.CypherQuery{
 		Statement: `
 			MATCH (t:Thing {uuid: {uuid}})

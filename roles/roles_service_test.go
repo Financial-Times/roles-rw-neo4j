@@ -21,13 +21,13 @@ func TestDelete(t *testing.T) {
 	altId := alternativeIdentifiers{UUIDS: []string{"UUID"}, FactsetIdentifier: "FACTSETID"}
 	roleToDelete := role{UUID: uuid, PrefLabel: "TestRole", AlternativeIdentifiers: altId}
 
-	assert.NoError(t, rolesDriver.Write(roleToDelete), "Failed to write role")
+	assert.NoError(t, rolesDriver.Write(roleToDelete, "TRANS_ID"), "Failed to write role")
 
-	found, err := rolesDriver.Delete(uuid)
+	found, err := rolesDriver.Delete(uuid, "TRANS_ID")
 	assert.True(t, found, "Didn't manage to delete role for uuid %", uuid)
 	assert.NoError(t, err, "Error deleting role for uuid %s", uuid)
 
-	p, found, err := rolesDriver.Read(uuid)
+	p, found, err := rolesDriver.Read(uuid, "TRANS_ID")
 
 	assert.Equal(t, role{}, p, "Found role %s who should have been deleted", p)
 	assert.False(t, found, "Found role for uuid %s who should have been deleted", uuid)
@@ -41,7 +41,7 @@ func TestCreateAllValuesPresent(t *testing.T) {
 	altId := alternativeIdentifiers{UUIDS: []string{"UUID"}, FactsetIdentifier: "FACTSETID"}
 	roleToWrite := role{UUID: uuid, PrefLabel: "TestRole", AlternativeIdentifiers: altId}
 
-	assert.NoError(t, rolesDriver.Write(roleToWrite), "Failed to write role")
+	assert.NoError(t, rolesDriver.Write(roleToWrite, "TRANS_ID"), "Failed to write role")
 
 	readRoleForUUIDAndCheckFieldsMatch(t, uuid, roleToWrite)
 
@@ -55,7 +55,7 @@ func TestCreateNoFactsetIdentifierPresent(t *testing.T) {
 	altId := alternativeIdentifiers{UUIDS: []string{"UUID"}}
 	roleToWrite := role{UUID: uuid, PrefLabel: "TestRole", AlternativeIdentifiers: altId}
 
-	assert.NoError(t, rolesDriver.Write(roleToWrite), "Failed to write role")
+	assert.NoError(t, rolesDriver.Write(roleToWrite, "TRANS_ID"), "Failed to write role")
 
 	readRoleForUUIDAndCheckFieldsMatch(t, uuid, roleToWrite)
 
@@ -69,7 +69,7 @@ func TestCreateHandlesSpecialCharacters(t *testing.T) {
 	altId := alternativeIdentifiers{UUIDS: []string{"UUID"}, FactsetIdentifier: "FACTSETID"}
 	roleToWrite := role{UUID: uuid, PrefLabel: "TestRole", AlternativeIdentifiers: altId}
 
-	assert.NoError(t, rolesDriver.Write(roleToWrite), "Failed to write role")
+	assert.NoError(t, rolesDriver.Write(roleToWrite, "TRANS_ID"), "Failed to write role")
 
 	readRoleForUUIDAndCheckFieldsMatch(t, uuid, roleToWrite)
 
@@ -83,7 +83,7 @@ func TestCreateNotAllValuesPresent(t *testing.T) {
 	altId := alternativeIdentifiers{UUIDS: []string{"UUID"}, FactsetIdentifier: "FACTSETID"}
 	roleToWrite := role{UUID: uuid, PrefLabel: "TestRole", AlternativeIdentifiers: altId}
 
-	assert.NoError(t, rolesDriver.Write(roleToWrite), "Failed to write role")
+	assert.NoError(t, rolesDriver.Write(roleToWrite, "TRANS_ID"), "Failed to write role")
 
 	readRoleForUUIDAndCheckFieldsMatch(t, uuid, roleToWrite)
 
@@ -96,7 +96,7 @@ func TestCreateAddsBoardRoleLabelForBoardRole(t *testing.T) {
 
 	altId := alternativeIdentifiers{UUIDS: []string{"UUID"}, FactsetIdentifier: "FACTSETID"}
 	roleToWrite := role{UUID: uuid, PrefLabel: "TestRole", AlternativeIdentifiers: altId}
-	assert.NoError(t, rolesDriver.Write(roleToWrite), "Failed to write role")
+	assert.NoError(t, rolesDriver.Write(roleToWrite, "TRANS_ID"), "Failed to write role")
 
 	readRoleForUUIDAndCheckFieldsMatch(t, uuid, roleToWrite)
 
@@ -105,7 +105,7 @@ func TestCreateAddsBoardRoleLabelForBoardRole(t *testing.T) {
 }
 
 func readRoleForUUIDAndCheckFieldsMatch(t *testing.T, uuid string, expectedRole role) {
-	storedRole, found, err := rolesDriver.Read(uuid)
+	storedRole, found, err := rolesDriver.Read(uuid, "TRANS_ID")
 
 	assert.NoError(t, err, "Error finding role for uuid %s", uuid)
 	assert.True(t, found, "Didn't find role for uuid %s", uuid)
@@ -128,7 +128,7 @@ func getRolesCypherDriver(t *testing.T) CypherDriver {
 }
 
 func cleanUp(t *testing.T, uuid string) {
-	found, err := rolesDriver.Delete(uuid)
+	found, err := rolesDriver.Delete(uuid, "TRANS_ID")
 	assert.True(t, found, "Didn't manage to delete role for uuid %", uuid)
 	assert.NoError(t, err, "Error deleting role for uuid %s", uuid)
 }
