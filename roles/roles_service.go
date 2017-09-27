@@ -34,7 +34,7 @@ func (pcd CypherDriver) Initialise() error {
 	}
 
 	return pcd.conn.EnsureConstraints(map[string]string{
-		"Role":              "uuid",
+		"MembershipRole":    "uuid",
 		"FactsetIdentifier": "value",
 		"UPPIdentifier":     "value"})
 }
@@ -55,7 +55,7 @@ func (pcd CypherDriver) Read(uuid, transactionID string) (interface{}, bool, err
 	}{}
 
 	query := &neoism.CypherQuery{
-		Statement: `MATCH (n:Role {uuid:{uuid}})
+		Statement: `MATCH (n:MembershipRole {uuid:{uuid}})
 		OPTIONAL MATCH (upp:UPPIdentifier)-[:IDENTIFIES]->(n)
 		OPTIONAL MATCH (factset:FactsetIdentifier)-[:IDENTIFIES]->(n)
 		return n.uuid
@@ -110,7 +110,7 @@ func (pcd CypherDriver) Write(thing interface{}, transactionID string) error {
 		Statement: `MATCH (t:Thing {uuid:{uuid}})
 		OPTIONAL MATCH (t)<-[iden:IDENTIFIES]-(i)
 		DELETE iden, i
-		REMOVE t:BoardRole`,
+		REMOVE t:BoardRole:MembershipRole`,
 		Parameters: map[string]interface{}{
 			"uuid": roleToWrite.UUID,
 		},
@@ -119,7 +119,7 @@ func (pcd CypherDriver) Write(thing interface{}, transactionID string) error {
 	//create-update node for ROLE
 	statement := `MERGE (n:Thing {uuid: {uuid}})
 				set n={allprops}
-				set n :Role`
+				set n :MembershipRole`
 
 	if roleToWrite.IsBoardRole {
 		statement += ` set n :BoardRole`
@@ -171,7 +171,7 @@ func (pcd CypherDriver) Delete(uuid, transactionID string) (bool, error) {
 		Statement: `
 			MATCH (t:Thing {uuid: {uuid}})
 			OPTIONAL MATCH (t)<-[iden:IDENTIFIES]-(i:Identifier)
-			REMOVE t:Role
+			REMOVE t:MembershipRole
 			REMOVE t:BoardRole
 			DELETE iden, i
 			SET t = {uuid:{uuid}}
@@ -226,7 +226,7 @@ func (pcd CypherDriver) Count() (int, error) {
 	}{}
 
 	query := &neoism.CypherQuery{
-		Statement: `MATCH (n:Role) return count(n) as c`,
+		Statement: `MATCH (n:MembershipRole) return count(n) as c`,
 		Result:    &results,
 	}
 
